@@ -27,6 +27,6 @@ class UUEGlickoBPLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "UEGlicko sample test testing"), Category = "UEGlickoTesting")
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "UEGlicko sample test testing"), Category = "UEGlicko")
 	static float UEGlickoSampleFunction(float Param);
 };
