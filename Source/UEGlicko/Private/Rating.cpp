@@ -25,14 +25,16 @@ URating* URating::MakeRatingSimple()
 	return NewObject<URating>();
 }
 
-void URating::UpdateMatches(TArray<UMatch*> Matches)
+#pragma region Changing Rating
+
+void URating::UpdateMatches(TArray<UMatch*> matches)
 {
 	TArray<double> gTable = TArray<double>();
 	TArray<double> eTable = TArray<double>();
 	double invV = 0.0;
 
-	for (int i = 0; i < Matches.Num(); i++) {
-		URating* opponent = Matches[i]->getOpponent();
+	for (int i = 0; i < matches.Num(); i++) {
+		URating* opponent = matches[i]->getOpponent();
 		double g = opponent->G();
 		double e = opponent->E(g, this);
 
@@ -44,8 +46,8 @@ void URating::UpdateMatches(TArray<UMatch*> Matches)
 	double v = 1.0 / invV;
 
 	double dInner = 0.0;
-	for (int j = 0; j < Matches.Num(); j++) {
-		dInner += gTable[j] * (Matches[j]->getScore() - eTable[j]);
+	for (int j = 0; j < matches.Num(); j++) {
+		dInner += gTable[j] * (matches[j]->getScore() - eTable[j]);
 	}
 
 	double d = v * dInner;
@@ -55,21 +57,34 @@ void URating::UpdateMatches(TArray<UMatch*> Matches)
 	volatilityPending = rating + deviationPending * deviationPending * dInner;
 }
 
-void URating::UpdateMatch(UMatch* Match)
+void URating::UpdateMatch(UMatch* match)
 {
+	TArray<UMatch*> mArr;
+	mArr.Add(match);
+	UpdateMatches(mArr);
 }
 
 void URating::UpdatePending()
 {
+	UpdateMatches(matchesPending);
 }
 
 void URating::Decay()
 {
+	ratingPending = rating;
+	deviationPending = FMath::Sqrt(deviation * deviation + volatility * volatility);
+	volatilityPending = volatility;
 }
 
 void URating::Apply()
 {
+	delta = ratingPending - rating;
+	rating = ratingPending;
+	deviation = deviationPending;
+	volatility = volatilityPending;
 }
+
+#pragma endregion
 
 double URating::getRating1()
 {
@@ -116,22 +131,75 @@ FString URating::getGlicko2()
 	return FString::Printf(TEXT("[µ%02d:φ%02d:σ%02d]"), getRating2(), getDeviation2(), getVolatility2());
 }
 
+#pragma region Math Functions
+
 double URating::G()
 {
-	return 0.0;
+	double scale = deviation / PI;
+	return 1.0 / FMath::Sqrt(1.0 + 3.0 * scale * scale);
 }
 
-double URating::E(double g, URating* rating)
+double URating::E(double g, URating* r)
 {
-	return 0.0;
+	double exponent = -1.0 * g * r->rating - this->rating;
+	return 1.0 / (1.0 + FMath::Exp(exponent));
 }
 
 double URating::F(double x, double dS, double pS, double v, double a, double tS)
 {
-	return 0.0;
+	double eX = FMath::Exp(x);
+	double num = eX * (dS - pS - v - eX);
+	double den = pS + v + eX;
+
+	return (num / (2.0 * den * den)) - ((x - a) / tS);
 }
 
 double URating::Convergence(double d, double v, double p, double s)
 {
-	return 0.0;
+	double dS = d * d;
+	double pS = p * p;
+	double tS = URating::SystemConst * URating::SystemConst;
+	double a = FMath::Log2(s * s);
+
+	double A = a;
+	double B;
+	double bTest = dS - pS - v;
+
+	if (bTest > 0.0)
+	{
+		B = FMath::Log2(bTest);
+	}
+	else
+	{
+		B = a - URating::SystemConst;
+		while (F(B, dS, pS, v, a, tS) < 0.0)
+		{
+			B -= URating::SystemConst;
+		}
+	}
+
+	double fA = F(A, dS, pS, v, a, tS);
+	double fB = F(B, dS, pS, v, a, tS);
+	while (FMath::Abs(B - A) > URating::ConvergenceD)
+	{
+		double C = A + (A - B) * fA / (fB - fA);
+		double fC = F(C, dS, pS, v, a, tS);
+
+		if (fC * fB < 0.0)
+		{
+			A = B;
+			fA = fB;
+		}
+		else
+		{
+			fA /= 2.0;
+		}
+
+		B = C;
+		fB = fC;
+	}
+
+	return A;
 }
+
+#pragma endregion
