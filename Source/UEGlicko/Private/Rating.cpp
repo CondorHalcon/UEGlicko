@@ -143,12 +143,12 @@ double URating::getDelta2()
 
 FString URating::getGlicko1()
 {
-	return FString::Printf(TEXT("[µ%d:φ%d]"), getRating1(), getDeviation1());
+	return FString::Printf(TEXT("[µ%d:φ%d]"), (int)getRating1(), (int)getDeviation1());
 }
 
 FString URating::getGlicko2()
 {
-	return FString::Printf(TEXT("[µ%d:φ%d:σ%d]"), getRating2(), getDeviation2(), getVolatility2());
+	return FString::Printf(TEXT("[µ%d:φ%d:σ%d]"), (int)getRating2(), (int)getDeviation2(), (int)getVolatility2());
 }
 
 #pragma region Math Functions
