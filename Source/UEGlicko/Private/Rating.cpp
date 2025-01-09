@@ -41,14 +41,14 @@ URating* URating::MakeRatingSimple()
 
 void URating::UpdateMatches(TArray<UMatch*> matches)
 {
-	if (matches.Num() == 0) { return; }
-	
 	TArray<double> gTable = TArray<double>();
 	gTable.Init(0.0, matches.Num());
 	TArray<double> eTable = TArray<double>();
 	eTable.Init(0.0, matches.Num());
 	double invV = 0.0;
 
+	// Compute the g and e values for each opponent and 
+	// accumulate the results into the v value
 	for (int i = 0; i < matches.Num(); i++) {
 		URating* opponent = matches[i]->getOpponent();
 		double g = opponent->G();
@@ -59,23 +59,27 @@ void URating::UpdateMatches(TArray<UMatch*> matches)
 		invV += g * g * e * (1.0 - e);
 	}
 
-	double v = 1.0 / invV;
+	// Invert the v value
+	double v = 1.0 / (invV == 0 ? .000001 : invV);
 
-	double dInner = 0.0;
+	// Compute the delta value from the g, e, and v values
+ 	double dInner = 0.0;
 	for (int j = 0; j < matches.Num(); j++) {
 		dInner += gTable[j] * (matches[j]->getScore() - eTable[j]);
 	}
 
+	// Apply the v value to the delta
 	double d = v * dInner;
 
-	ratingPending = FMath::Exp(Convergence(d, v, deviation, volatility) / 2.0);
-	deviationPending = 1.0 / FMath::Sqrt((1.0 / (deviation * deviation + ratingPending * ratingPending)) + invV);
-	volatilityPending = rating + deviationPending * deviationPending * dInner;
+	// Compute new rating, deviation and volatility values
+	volatilityPending = FMath::Exp(Convergence(d, v, deviation, volatility) / 2.0);
+	deviationPending = 1.0 / FMath::Sqrt((1.0 / (deviation * deviation + volatilityPending * volatilityPending)) + invV);
+	ratingPending = rating + deviationPending * deviationPending * dInner;
 }
 
 void URating::UpdateMatch(UMatch* match)
 {
-	TArray<UMatch*> mArr;
+	TArray<UMatch*> mArr = TArray<UMatch*>();
 	mArr.Add(match);
 	UpdateMatches(mArr);
 }
@@ -157,7 +161,7 @@ double URating::G()
 
 double URating::E(double g, URating* r)
 {
-	double exponent = -1.0 * g * r->rating - this->rating;
+	double exponent = -1.0 * g * (r->rating - this->rating);
 	return 1.0 / (1.0 + FMath::Exp(exponent));
 }
 
@@ -172,11 +176,13 @@ double URating::F(double x, double dS, double pS, double v, double a, double tS)
 
 double URating::Convergence(double d, double v, double p, double s)
 {
+	// Initialize function values for iteration procedure
 	double dS = d * d;
 	double pS = p * p;
 	double tS = URating::SystemConst * URating::SystemConst;
 	double a = FMath::Log2(s * s);
 
+	// Select the upper and lower iteration ranges
 	double A = a;
 	double B;
 	double bTest = dS - pS - v;
