@@ -17,12 +17,12 @@ class UEGLICKO_API URating : public UObject
 public:
 	URating();
 
-	const double DefaultRating = 1500.0;
-	const double DefaultDeviation = 350.0;
-	const double DefaultVolatility = 0.06;
-	const double Scale = 173.7178;
-	const double SystemConst = 0.5;
-	const double ConvergenceD = 0.000001;
+	static double DefaultRating; // 1500.0;
+	static double DefaultDeviation; // 350.0;
+	static double DefaultVolatility; // 0.06;
+	static double Scale; // 173.7178;
+	static double SystemConst; // 0.5;
+	static double ConvergenceD; // 0.000001;
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Make Rating", Keywords = "Glicko Rating Make Rating Detailed"), Category = "UEGlicko|Rating")
 	static URating *MakeRating(double r = 1500, double d = 350, double v = 0.06);
@@ -94,6 +94,6 @@ private:
 
 	double G();
 	double E(double g, URating* rating);
-	double F(double x, double dS, double pS, double v, double a, double tS);
-	double Convergence(double d, double v, double p, double s);
+	static double F(double x, double dS, double pS, double v, double a, double tS);
+	static double Convergence(double d, double v, double p, double s);
 };

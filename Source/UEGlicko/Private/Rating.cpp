@@ -4,18 +4,30 @@
 #include "Match.h"
 #include "Math/UnrealMathUtility.h"
 
+double URating::DefaultRating = 1500.0;
+double URating::DefaultDeviation = 350.0;
+double URating::DefaultVolatility = 0.06;
+double URating::Scale = 173.7178;
+double URating::SystemConst = 0.5;
+double URating::ConvergenceD = 0.000001;
+
 URating::URating()
 {
-	this->rating = 1500;
-	this->deviation = 350;
-	this->volatility = 0.06;
+	this->rating = 0; //(URating::DefaultRating - URating::DefaultRating) / URating::Scale;
+	this->deviation = URating::DefaultDeviation / URating::Scale;
+	this->volatility = URating::DefaultVolatility;
+	this->delta = 0.0;
+	// pending
+	this->ratingPending = this->rating;
+	this->deviationPending = this->deviation;
+	this->volatilityPending = this->volatility;
 }
 
 URating* URating::MakeRating(double r, double d, double v)
 {
 	URating* rating = NewObject<URating>();
-	rating->rating = r;
-	rating->deviation = d;
+	rating->rating = (r - URating::DefaultRating) / URating::Scale;
+	rating->deviation = d / URating::Scale;
 	rating->volatility = v;
 	return rating;
 }
@@ -29,8 +41,12 @@ URating* URating::MakeRatingSimple()
 
 void URating::UpdateMatches(TArray<UMatch*> matches)
 {
+	if (matches.Num() == 0) { return; }
+	
 	TArray<double> gTable = TArray<double>();
+	gTable.Init(0.0, matches.Num());
 	TArray<double> eTable = TArray<double>();
+	eTable.Init(0.0, matches.Num());
 	double invV = 0.0;
 
 	for (int i = 0; i < matches.Num(); i++) {
@@ -123,12 +139,12 @@ double URating::getDelta2()
 
 FString URating::getGlicko1()
 {
-	return FString::Printf(TEXT("[µ%02d:φ%02d]"), getRating1(), getDeviation1());
+	return FString::Printf(TEXT("[µ%d:φ%d]"), getRating1(), getDeviation1());
 }
 
 FString URating::getGlicko2()
 {
-	return FString::Printf(TEXT("[µ%02d:φ%02d:σ%02d]"), getRating2(), getDeviation2(), getVolatility2());
+	return FString::Printf(TEXT("[µ%d:φ%d:σ%d]"), getRating2(), getDeviation2(), getVolatility2());
 }
 
 #pragma region Math Functions
