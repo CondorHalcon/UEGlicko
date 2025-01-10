@@ -16,30 +16,17 @@ public:
 	/// @brief Class constructor
 	URating();
 
-	/// @brief The default/initial rating value
-	static double DefaultRating; // 1500.0;
-	/// @brief The default/initial deviation value
-	static double DefaultDeviation; // 350.0;
-	/// @brief The default/initial volatility value
-	static double DefaultVolatility; // 0.06;
-	/// @brief The Glicko-1 to Glicko-2 scale factor
-	static double Scale; // 173.7178;
-	/// @brief The system constant (tau)
-	static double SystemConst; // 0.5;
-	/// @brief The convergence constant (epsilon)
-	static double ConvergenceD; // 0.000001;
-
 	/// @brief Creates a new rating with the specified rating, deviation and volatility.
 	/// @param r Glicko-1 rating
 	/// @param d Glicko-1 deviation
 	/// @param v Glicko-2 volatility
 	/// @return Rating
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Make Rating", ReturnDisplayName = "Rating", Keywords = "Glicko Rating Make Rating Detailed"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintPure, meta = (ReturnDisplayName = "Rating", Keywords = "Glicko Rating Make Rating Detailed"), Category = "UE Glicko|Rating")
 	static URating *MakeRating(double r = 1500, double d = 350, double v = 0.06);
 
 	/// @brief Creates a new rating with the default rating values.
 	/// @return Rating
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Make Rating Simple", ReturnDisplayName = "Rating", Keywords = "Glicko Rating Make Rating"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintPure, meta = (ReturnDisplayName = "Rating", Keywords = "Glicko Rating Make Rating"), Category = "UE Glicko|Rating")
 	static URating *MakeRatingSimple();
 
 	/// @brief Updates the rating based on the specified matches.
@@ -48,7 +35,7 @@ public:
 	/// @see Apply
 	/// @see Decay
 	/// @see UpdateMatch
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Update Matches", Keywords = "Glicko Rating Update Matches"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintCallable, meta = (Keywords = "Glicko Rating Update Matches"), Category = "UE Glicko|Rating")
 	void UpdateMatches(TArray<UMatch *> matches);
 
 	/// @brief Updates the rating based on the specified match.
@@ -57,66 +44,66 @@ public:
 	/// @see Apply
 	/// @see Decay
 	/// @see UpdateMatches
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Update Match", Keywords = "Glicko Rating Update Match"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintCallable, meta = (Keywords = "Glicko Rating Update Match"), Category = "UE Glicko|Rating")
 	void UpdateMatch(UMatch *match);
 
 	/// @brief Decays the rating deviation if no games were played.
 	/// @see Apply
 	/// @see UpdateMatch
 	/// @see UpdateMatches
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Decay", Keywords = "Glicko Rating Decay"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintCallable, meta = (Keywords = "Glicko Rating Decay"), Category = "UE Glicko|Rating")
 	void Decay();
 
 	/// @brief Applies the pending rating values to the actual rating values.
 	/// @see Decay
 	/// @see UpdateMatch
 	/// @see UpdateMatches
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Apply", Keywords = "Glicko Rating Apply"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintCallable, meta = (Keywords = "Glicko Rating Apply"), Category = "UE Glicko|Rating")
 	void Apply();
 
 	/// @brief Get Glicko-1 rating
 	/// @return rating
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Rating 1", Keywords = "Glicko Rating Get Rating 1"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Rating 1", Keywords = "Glicko Rating Get Rating 1"), Category = "UE Glicko|Rating")
 	double getRating1();
 
 	/// @brief Get Glicko-1 deviation
 	/// @return deviation
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Deviation 1", Keywords = "Glicko Rating Get Deviation 1"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Deviation 1", Keywords = "Glicko Rating Get Deviation 1"), Category = "UE Glicko|Rating")
 	double getDeviation1();
 
 	/// @brief Get Glicko-1 delta
 	/// @return delta
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Delta 1", Keywords = "Glicko Rating Get Delta 1"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Delta 1", Keywords = "Glicko Rating Get Delta 1"), Category = "UE Glicko|Rating")
 	double getDelta1();
 
 	/// @brief Get Glicko-2 rating
 	/// @return rating
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Rating 2", Keywords = "Glicko Rating Get Rating 2"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Rating 2", Keywords = "Glicko Rating Get Rating 2"), Category = "UE Glicko|Rating")
 	double getRating2();
 
 	/// @brief Get Glicko-2 deviation
 	/// @return deviation
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Deviation 2", Keywords = "Glicko Rating Get Deviation 2"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Deviation 2", Keywords = "Glicko Rating Get Deviation 2"), Category = "UE Glicko|Rating")
 	double getDeviation2();
 
 	/// @brief Get Glicko-2 volatility
 	/// @return volatility
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Volatility 2", Keywords = "Glicko Rating Get Volatility 2"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Volatility 2", Keywords = "Glicko Rating Get Volatility 2"), Category = "UE Glicko|Rating")
 	double getVolatility2();
 
 	/// @brief Get Glicko-2 delta
 	/// @return delta
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Delta 2", Keywords = "Glicko Rating Get Delta 2"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Delta 2", Keywords = "Glicko Rating Get Delta 2"), Category = "UE Glicko|Rating")
 	double getDelta2();
 
 	/// @brief Get rating in Glicko-1 format
 	/// @return Glicko-1 string rating
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Glicko 1", Keywords = "Glicko Rating Get Glicko 1"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Glicko 1", Keywords = "Glicko Rating Get Glicko 1"), Category = "UE Glicko|Rating")
 	FString getGlicko1();
 
 	/// @brief Get rating in Glicko-2 format
 	/// @return Glicko-2 string rating
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Glicko 2", Keywords = "Glicko Rating Get Glicko 2"), Category = "UEGlicko|Rating")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Glicko 2", Keywords = "Glicko Rating Get Glicko 2"), Category = "UE Glicko|Rating")
 	FString getGlicko2();
 
 private:

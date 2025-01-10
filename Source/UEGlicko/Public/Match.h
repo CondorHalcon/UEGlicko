@@ -21,17 +21,17 @@ public:
 	/// @param score The score of the match.
 	/// @return match
 	/// @ref URating
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Make Match", ReturnDisplayName = "Match", Keywords = "Glicko Match Make Match"), Category = "UEGlicko|Match")
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Make Match", ReturnDisplayName = "Match", Keywords = "Glicko Match Make Match"), Category = "UE Glicko|Match")
 	static UMatch *MakeMatch(URating *opponent, float score = 0);
 
 	/// @brief Get the opponent in the match.
 	/// @return opponent rating
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Opponent", Keywords = "Glicko Match Get Opponent"), Category = "UEGlicko|Match")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Opponent", Keywords = "Glicko Match Get Opponent"), Category = "UE Glicko|Match")
 	URating *getOpponent();
 
 	/// @brief Get the score of the match. Should be 0 for a loss, 1 for a win, and .5 for a draw.
 	/// @return score
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Score", Keywords = "Glicko Match Get Score"), Category = "UEGlicko|Match")
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Score", Keywords = "Glicko Match Get Score"), Category = "UE Glicko|Match")
 	float getScore();
 
 private:

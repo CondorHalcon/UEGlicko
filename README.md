@@ -2,7 +2,9 @@
 An Unreal Engine implementation of the Glicko-2 player rating system.
 
 ## Usage
-The rating system has two components: the configuration and rating objects. The values in `Glicko` described all of the configurable components and can be changed in the project settings in `Edit -> ProjectSettings/CondorHalcon/Glicko`; this includes the default rating values and system constants. Details of how to configure the rating system are described in the [Glicko-2 paper](http://www.glicko.net/glicko/glicko2.pdf).
+The rating system has two components: the configuration and rating objects. The values in `Glicko` described all of the configurable components and can be changed in the project settings in `Edit -> ProjectSettings -> UE Glicko`; this includes the default rating values and system constants. Details of how to configure the rating system are described in the [Glicko-2 paper](http://www.glicko.net/glicko/glicko2.pdf).
+
+![Glicko Settings](./Resources/UEGlickoSettings.png)
 
 ---
 
@@ -23,9 +25,6 @@ New player ratings can be created as follows:
 ``` 
 
 ![Make Match](./Resources/MakeMatch.png)
-
-
-
 
 ---
 

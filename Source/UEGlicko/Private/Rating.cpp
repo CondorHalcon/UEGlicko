@@ -2,20 +2,15 @@
 
 #include "Rating.h"
 #include "Match.h"
+#include "GlickoSettings.h"
 #include "Math/UnrealMathUtility.h"
-
-double URating::DefaultRating = 1500.0;
-double URating::DefaultDeviation = 350.0;
-double URating::DefaultVolatility = 0.06;
-double URating::Scale = 173.7178;
-double URating::SystemConst = 0.5;
-double URating::ConvergenceD = 0.000001;
 
 URating::URating()
 {
-	this->rating = 0; //(URating::DefaultRating - URating::DefaultRating) / URating::Scale;
-	this->deviation = URating::DefaultDeviation / URating::Scale;
-	this->volatility = URating::DefaultVolatility;
+	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
+	this->rating = 0; // (DefaultRating - DefaultRating) / Scale;
+	this->deviation = Glicko->DefaultDeviation / Glicko->Scale;
+	this->volatility = Glicko->DefaultVolatility;
 	this->delta = 0.0;
 	// pending
 	this->ratingPending = this->rating;
@@ -25,9 +20,10 @@ URating::URating()
 
 URating* URating::MakeRating(double r, double d, double v)
 {
+	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
 	URating* rating = NewObject<URating>();
-	rating->rating = (r - URating::DefaultRating) / URating::Scale;
-	rating->deviation = d / URating::Scale;
+	rating->rating = (r - Glicko->DefaultRating) / Glicko->Scale;
+	rating->deviation = d / Glicko->Scale;
 	rating->volatility = v;
 	return rating;
 }
@@ -103,17 +99,20 @@ void URating::Apply()
 
 double URating::getRating1()
 {
-	return (this->rating * URating::Scale) + URating::DefaultRating;
+	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
+	return (this->rating * Glicko->Scale) + Glicko->DefaultRating;
 }
 
 double URating::getDeviation1()
 {
-	return this->deviation * URating::Scale;
+	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
+	return this->deviation * Glicko->Scale;
 }
 
 double URating::getDelta1()
 {
-	return this->delta * URating::Scale;
+	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
+	return this->delta * Glicko->Scale;
 }
 
 double URating::getRating2()
@@ -171,10 +170,12 @@ double URating::F(double x, double dS, double pS, double v, double a, double tS)
 
 double URating::Convergence(double d, double v, double p, double s)
 {
+	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
+
 	// Initialize function values for iteration procedure
 	double dS = d * d;
 	double pS = p * p;
-	double tS = URating::SystemConst * URating::SystemConst;
+	double tS = Glicko->SystemConst * Glicko->SystemConst;
 	double a = FMath::Log2(s * s);
 
 	// Select the upper and lower iteration ranges
@@ -188,16 +189,16 @@ double URating::Convergence(double d, double v, double p, double s)
 	}
 	else
 	{
-		B = a - URating::SystemConst;
+		B = a - Glicko->SystemConst;
 		while (F(B, dS, pS, v, a, tS) < 0.0)
 		{
-			B -= URating::SystemConst;
+			B -= Glicko->SystemConst;
 		}
 	}
 
 	double fA = F(A, dS, pS, v, a, tS);
 	double fB = F(B, dS, pS, v, a, tS);
-	while (FMath::Abs(B - A) > URating::ConvergenceD)
+	while (FMath::Abs(B - A) > Glicko->Convergence)
 	{
 		double C = A + (A - B) * fA / (fB - fA);
 		double fC = F(C, dS, pS, v, a, tS);
