@@ -7,26 +7,36 @@
 
 class URating;
 
-/**
- *
- */
+/// @brief Glicko match object.
 UCLASS(BlueprintType)
 class UEGLICKO_API UMatch : public UObject
 {
 	GENERATED_BODY()
 public:
+	/// @brief Class constructor
 	UMatch();
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Make Match", Keywords = "Glicko Match Make Match"), Category = "UEGlicko|Match")
+	/// @brief Create a new match.
+	/// @param opponent Opponent in the match.
+	/// @param score The score of the match.
+	/// @return match
+	/// @ref URating
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Make Match", ReturnDisplayName = "Match", Keywords = "Glicko Match Make Match"), Category = "UEGlicko|Match")
 	static UMatch *MakeMatch(URating *opponent, float score = 0);
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Opponent", Keywords = "Glicko Match Get Opponent"), Category = "UEGlicko|Match")
+	/// @brief Get the opponent in the match.
+	/// @return opponent rating
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Opponent", Keywords = "Glicko Match Get Opponent"), Category = "UEGlicko|Match")
 	URating *getOpponent();
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Score", Keywords = "Glicko Match Get Score"), Category = "UEGlicko|Match")
+	/// @brief Get the score of the match. Should be 0 for a loss, 1 for a win, and .5 for a draw.
+	/// @return score
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Score", Keywords = "Glicko Match Get Score"), Category = "UEGlicko|Match")
 	float getScore();
 
 private:
+	/// @brief The opponent in the match
 	URating *opponent;
+	/// @brief The score of the match. Should be 0 for a loss, 1 for a win, and .5 for a draw.
 	float _score;
 };

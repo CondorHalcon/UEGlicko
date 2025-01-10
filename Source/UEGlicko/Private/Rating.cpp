@@ -84,11 +84,6 @@ void URating::UpdateMatch(UMatch* match)
 	UpdateMatches(mArr);
 }
 
-void URating::UpdatePending()
-{
-	UpdateMatches(matchesPending);
-}
-
 void URating::Decay()
 {
 	ratingPending = rating;
@@ -143,12 +138,12 @@ double URating::getDelta2()
 
 FString URating::getGlicko1()
 {
-	return FString::Printf(TEXT("[µ%d:φ%d]"), (int)getRating1(), (int)getDeviation1());
+	return FString::Printf(TEXT("µ%d±φ%d"), (int)getRating1(), (int)getDeviation1());
 }
 
 FString URating::getGlicko2()
 {
-	return FString::Printf(TEXT("[µ%d:φ%d:σ%d]"), (int)getRating2(), (int)getDeviation2(), (int)getVolatility2());
+	return FString::Printf(TEXT("µ%d±φ%d:σ%d"), (int)getRating2(), (int)getDeviation2(), (int)getVolatility2());
 }
 
 #pragma region Math Functions
