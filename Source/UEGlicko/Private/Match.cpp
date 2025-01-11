@@ -3,26 +3,10 @@
 #include "Match.h"
 #include "Rating.h"
 
-UMatch::UMatch()
+FMatch UMatchHelperLibrary::MakeMatch(URating *opponent, float score)
 {
-    this->opponent = nullptr;
-    this->_score = 0;
-}
-
-URating* UMatch::getOpponent()
-{
-    return this->opponent;
-}
-
-float UMatch::getScore()
-{
-    return _score;
-}
-
-UMatch* UMatch::MakeMatch(URating* opponent, float score)
-{
-    UMatch* match = NewObject<UMatch>();
-    match->opponent = opponent;
-    match->_score = score;
+    FMatch match;
+    match.Opponent = opponent;
+    match.Score = score;
     return match;
 }

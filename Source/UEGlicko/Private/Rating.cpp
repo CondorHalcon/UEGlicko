@@ -8,23 +8,23 @@
 URating::URating()
 {
 	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
-	this->rating = 0; // (DefaultRating - DefaultRating) / Scale;
-	this->deviation = Glicko->DefaultDeviation / Glicko->Scale;
-	this->volatility = Glicko->DefaultVolatility;
-	this->delta = 0.0;
+	this->Rating = 0; // (DefaultRating - DefaultRating) / Scale;
+	this->Deviation = Glicko->DefaultDeviation / Glicko->Scale;
+	this->Volatility = Glicko->DefaultVolatility;
+	this->Delta = 0.0;
 	// pending
-	this->ratingPending = this->rating;
-	this->deviationPending = this->deviation;
-	this->volatilityPending = this->volatility;
+	this->RatingPending = this->Rating;
+	this->DeviationPending = this->Deviation;
+	this->VolatilityPending = this->Volatility;
 }
 
 URating* URating::MakeRating(double r, double d, double v)
 {
 	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
 	URating* rating = NewObject<URating>();
-	rating->rating = (r - Glicko->DefaultRating) / Glicko->Scale;
-	rating->deviation = d / Glicko->Scale;
-	rating->volatility = v;
+	rating->Rating = (r - Glicko->DefaultRating) / Glicko->Scale;
+	rating->Deviation = d / Glicko->Scale;
+	rating->Volatility = v;
 	return rating;
 }
 
@@ -35,7 +35,7 @@ URating* URating::MakeRatingSimple()
 
 #pragma region Changing Rating
 
-void URating::UpdateMatches(TArray<UMatch*> matches)
+void URating::UpdateMatches(TArray<FMatch> matches)
 {
 	TArray<double> gTable = TArray<double>();
 	gTable.Init(0.0, matches.Num());
@@ -43,12 +43,10 @@ void URating::UpdateMatches(TArray<UMatch*> matches)
 	eTable.Init(0.0, matches.Num());
 	double invV = 0.0;
 
-	// Compute the g and e values for each opponent and 
-	// accumulate the results into the v value
+	// Compute the g and e values for each opponent and  accumulate the results into the v value
 	for (int i = 0; i < matches.Num(); i++) {
-		URating* opponent = matches[i]->getOpponent();
-		double g = opponent->G();
-		double e = opponent->E(g, this);
+		double g = matches[i].Opponent->G();
+		double e = matches[i].Opponent->E(g, this);
 
 		gTable[i] = g;
 		eTable[i] = e;
@@ -61,38 +59,38 @@ void URating::UpdateMatches(TArray<UMatch*> matches)
 	// Compute the delta value from the g, e, and v values
  	double dInner = 0.0;
 	for (int j = 0; j < matches.Num(); j++) {
-		dInner += gTable[j] * (matches[j]->getScore() - eTable[j]);
+		dInner += gTable[j] * (matches[j].Score - eTable[j]);
 	}
 
 	// Apply the v value to the delta
 	double d = v * dInner;
 
 	// Compute new rating, deviation and volatility values
-	volatilityPending = FMath::Exp(Convergence(d, v, deviation, volatility) / 2.0);
-	deviationPending = 1.0 / FMath::Sqrt((1.0 / (deviation * deviation + volatilityPending * volatilityPending)) + invV);
-	ratingPending = rating + deviationPending * deviationPending * dInner;
+	VolatilityPending = FMath::Exp(Convergence(d, v, Deviation, Volatility) / 2.0);
+	DeviationPending = 1.0 / FMath::Sqrt((1.0 / (Deviation * Deviation + VolatilityPending * VolatilityPending)) + invV);
+	RatingPending = Rating + DeviationPending * DeviationPending * dInner;
 }
 
-void URating::UpdateMatch(UMatch* match)
+void URating::UpdateMatch(FMatch match)
 {
-	TArray<UMatch*> mArr = TArray<UMatch*>();
+	TArray<FMatch> mArr = TArray<FMatch>();
 	mArr.Add(match);
 	UpdateMatches(mArr);
 }
 
 void URating::Decay()
 {
-	ratingPending = rating;
-	deviationPending = FMath::Sqrt(deviation * deviation + volatility * volatility);
-	volatilityPending = volatility;
+	RatingPending = Rating;
+	DeviationPending = FMath::Sqrt(Deviation * Deviation + Volatility * Volatility);
+	VolatilityPending = Volatility;
 }
 
 void URating::Apply()
 {
-	delta = ratingPending - rating;
-	rating = ratingPending;
-	deviation = deviationPending;
-	volatility = volatilityPending;
+	Delta = RatingPending - Rating;
+	Rating = RatingPending;
+	Deviation = DeviationPending;
+	Volatility = VolatilityPending;
 }
 
 #pragma endregion
@@ -100,39 +98,39 @@ void URating::Apply()
 double URating::getRating1()
 {
 	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
-	return (this->rating * Glicko->Scale) + Glicko->DefaultRating;
+	return (this->Rating * Glicko->Scale) + Glicko->DefaultRating;
 }
 
 double URating::getDeviation1()
 {
 	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
-	return this->deviation * Glicko->Scale;
+	return this->Deviation * Glicko->Scale;
 }
 
 double URating::getDelta1()
 {
 	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
-	return this->delta * Glicko->Scale;
+	return this->Delta * Glicko->Scale;
 }
 
 double URating::getRating2()
 {
-	return this->rating;
+	return this->Rating;
 }
 
 double URating::getDeviation2()
 {
-	return this->deviation;
+	return this->Deviation;
 }
 
 double URating::getVolatility2()
 {
-	return this->volatility;
+	return this->Volatility;
 }
 
 double URating::getDelta2()
 {
-	return this->delta;
+	return this->Delta;
 }
 
 FString URating::getGlicko1()
@@ -149,13 +147,13 @@ FString URating::getGlicko2()
 
 double URating::G()
 {
-	double scale = deviation / PI;
+	double scale = Deviation / PI;
 	return 1.0 / FMath::Sqrt(1.0 + 3.0 * scale * scale);
 }
 
 double URating::E(double g, URating* r)
 {
-	double exponent = -1.0 * g * (r->rating - this->rating);
+	double exponent = -1.0 * g * (r->Rating - this->Rating);
 	return 1.0 / (1.0 + FMath::Exp(exponent));
 }
 

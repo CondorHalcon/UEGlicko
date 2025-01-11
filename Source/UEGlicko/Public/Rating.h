@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Rating.generated.h"
 
-class UMatch;
+struct FMatch;
 
 /// @brief Glicko rating object.
 UCLASS(BlueprintType)
@@ -31,21 +31,21 @@ public:
 
 	/// @brief Updates the rating based on the specified matches.
 	/// @param matches Matches to calculate for
-	/// @ref UMatch
+	/// @ref FMatch
 	/// @see Apply
 	/// @see Decay
 	/// @see UpdateMatch
 	UFUNCTION(BlueprintCallable, meta = (Keywords = "Glicko Rating Update Matches"), Category = "UE Glicko|Rating")
-	void UpdateMatches(TArray<UMatch *> matches);
+	void UpdateMatches(TArray<FMatch> matches);
 
 	/// @brief Updates the rating based on the specified match.
 	/// @param match Match to calculate for
-	/// @ref UMatch
+	/// @ref FMatch
 	/// @see Apply
 	/// @see Decay
 	/// @see UpdateMatches
 	UFUNCTION(BlueprintCallable, meta = (Keywords = "Glicko Rating Update Match"), Category = "UE Glicko|Rating")
-	void UpdateMatch(UMatch *match);
+	void UpdateMatch(FMatch match);
 
 	/// @brief Decays the rating deviation if no games were played.
 	/// @see Apply
@@ -109,26 +109,26 @@ public:
 private:
 	/// @brief The rating; µ (mu)
 	UPROPERTY(VisibleAnywhere)
-	double rating;
+	double Rating;
 
 	/// @brief The rating deviation; φ (phi)
 	UPROPERTY(VisibleAnywhere)
-	double deviation;
+	double Deviation;
 
 	/// @brief The rating volatility; σ (sigma)
 	UPROPERTY(VisibleAnywhere)
-	double volatility;
+	double Volatility;
 
 	/// @brief The rating delta; Δ (delta)
 	UPROPERTY(VisibleAnywhere)
-	double delta;
+	double Delta;
 
 	/// @brief The pending rating value; µ' (mu prime)
-	double ratingPending;
+	double RatingPending;
 	/// @brief The pending deviation value; φ' (phi prime)
-	double deviationPending;
+	double DeviationPending;
 	/// @brief The pending volatility value; σ' (sigma prime)
-	double volatilityPending;
+	double VolatilityPending;
 
 	/// @brief Computes the value of the g function for a rating
 	/// @return

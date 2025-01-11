@@ -40,10 +40,10 @@ In the Glicko rating system, player ratings are updated in batches. As described
     URating* opponent3 = URating::MakeRating(1700, 300);
 
     // Update the rating from the 3 games
-    TArray<UMatch*> matches = TArray<UMatch*>();
-    matches.Add(UMatch::MakeMatch(opponent1, 1.0));
-    matches.Add(UMatch::MakeMatch(opponent2, 0));
-    matches.Add(UMatch::MakeMatch(opponent3, 0));
+    TArray<FMatch> matches = TArray<FMatch>();
+    matches.Add(FMatch::MakeMatch(opponent1, 1.0));
+    matches.Add(FMatch::MakeMatch(opponent2, 0));
+    matches.Add(FMatch::MakeMatch(opponent3, 0));
 
     player->Update(matches);
     player->Apply();
@@ -63,8 +63,8 @@ A version of `URating::Update()` that takes a single opponent and game outcome c
     URating* player2 = URating::MakeRating(1400, 30);
 
     // Update the ratings based on a game in which player1 beat player2
-    player1->Update(UMatch::MakeMatch(player2, 1.0));
-    player2->Update(UMatch::MakeMatch(player1, 0.0));
+    player1->Update(FMatch::MakeMatch(player2, 1.0));
+    player2->Update(FMatch::MakeMatch(player1, 0.0));
 
     player1->Apply();
     player2->Apply();
