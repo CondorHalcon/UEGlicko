@@ -5,8 +5,7 @@
 #include "GlickoSettings.h"
 #include "Math/UnrealMathUtility.h"
 
-URating::URating()
-{
+URating::URating() {
 	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
 	this->Rating = 0; // (DefaultRating - DefaultRating) / Scale;
 	this->Deviation = Glicko->DefaultDeviation / Glicko->Scale;
@@ -18,8 +17,7 @@ URating::URating()
 	this->VolatilityPending = this->Volatility;
 }
 
-URating* URating::MakeRating(double r, double d, double v)
-{
+URating* URating::MakeRating(double r, double d, double v) {
 	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
 	URating* rating = NewObject<URating>();
 	rating->Rating = (r - Glicko->DefaultRating) / Glicko->Scale;
@@ -28,15 +26,13 @@ URating* URating::MakeRating(double r, double d, double v)
 	return rating;
 }
 
-URating* URating::MakeRatingSimple()
-{
+URating* URating::MakeRatingSimple() {
 	return NewObject<URating>();
 }
 
 #pragma region Changing Rating
 
-void URating::UpdateMatches(TArray<FMatch> matches)
-{
+void URating::UpdateMatches(TArray<FMatch> matches) {
 	TArray<double> gTable = TArray<double>();
 	gTable.Init(0.0, matches.Num());
 	TArray<double> eTable = TArray<double>();
@@ -57,7 +53,7 @@ void URating::UpdateMatches(TArray<FMatch> matches)
 	double v = 1.0 / (invV == 0 ? .000001 : invV);
 
 	// Compute the delta value from the g, e, and v values
- 	double dInner = 0.0;
+	double dInner = 0.0;
 	for (int j = 0; j < matches.Num(); j++) {
 		dInner += gTable[j] * (matches[j].Score - eTable[j]);
 	}
@@ -71,22 +67,19 @@ void URating::UpdateMatches(TArray<FMatch> matches)
 	RatingPending = Rating + DeviationPending * DeviationPending * dInner;
 }
 
-void URating::UpdateMatch(FMatch match)
-{
+void URating::UpdateMatch(FMatch match) {
 	TArray<FMatch> mArr = TArray<FMatch>();
 	mArr.Add(match);
 	UpdateMatches(mArr);
 }
 
-void URating::Decay()
-{
+void URating::Decay() {
 	RatingPending = Rating;
 	DeviationPending = FMath::Sqrt(Deviation * Deviation + Volatility * Volatility);
 	VolatilityPending = Volatility;
 }
 
-void URating::Apply()
-{
+void URating::Apply() {
 	Delta = RatingPending - Rating;
 	Rating = RatingPending;
 	Deviation = DeviationPending;
@@ -95,70 +88,64 @@ void URating::Apply()
 
 #pragma endregion
 
-double URating::getRating1()
-{
+double URating::getRating1() {
 	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
 	return (this->Rating * Glicko->Scale) + Glicko->DefaultRating;
 }
 
-double URating::getDeviation1()
-{
+double URating::getDeviation1() {
 	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
 	return this->Deviation * Glicko->Scale;
 }
 
-double URating::getDelta1()
-{
+double URating::getDelta1() {
 	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
 	return this->Delta * Glicko->Scale;
 }
 
-double URating::getRating2()
-{
+double URating::getRating2() {
 	return this->Rating;
 }
 
-double URating::getDeviation2()
-{
+double URating::getDeviation2() {
 	return this->Deviation;
 }
 
-double URating::getVolatility2()
-{
+double URating::getVolatility2() {
 	return this->Volatility;
 }
 
-double URating::getDelta2()
-{
+double URating::getDelta2() {
 	return this->Delta;
 }
 
-FString URating::getGlicko1()
-{
-	return FString::Printf(TEXT("µ%d±φ%d"), (int)getRating1(), (int)getDeviation1());
+FString URating::getGlicko1(bool symbals) {
+	FString result = symbals ?
+		FString::Printf(TEXT("µ%d±φ%d"), (int)getRating1(), (int)getDeviation1()) :
+		FString::Printf(TEXT("%d±%d"), (int)getRating1(), (int)getDeviation1());
+	return result;
 }
 
-FString URating::getGlicko2()
-{
-	return FString::Printf(TEXT("µ%d±φ%d:σ%d"), (int)getRating2(), (int)getDeviation2(), (int)getVolatility2());
+FString URating::getGlicko2(bool symbals) {
+	FString result = symbals ?
+		FString::Printf(TEXT("µ%d±φ%d:σ%d"), (int)getRating2(), (int)getDeviation2(), (int)getVolatility2()) :
+		FString::Printf(TEXT("%d±%d:%d"), (int)getRating2(), (int)getDeviation2(), (int)getVolatility2());
+	return result;
 }
 
 #pragma region Math Functions
 
-double URating::G()
-{
+double URating::G() {
 	double scale = Deviation / PI;
 	return 1.0 / FMath::Sqrt(1.0 + 3.0 * scale * scale);
 }
 
-double URating::E(double g, URating* r)
-{
+double URating::E(double g, URating* r) {
 	double exponent = -1.0 * g * (r->Rating - this->Rating);
 	return 1.0 / (1.0 + FMath::Exp(exponent));
 }
 
-double URating::F(double x, double dS, double pS, double v, double a, double tS)
-{
+double URating::F(double x, double dS, double pS, double v, double a, double tS) {
 	double eX = FMath::Exp(x);
 	double num = eX * (dS - pS - v - eX);
 	double den = pS + v + eX;
@@ -166,8 +153,7 @@ double URating::F(double x, double dS, double pS, double v, double a, double tS)
 	return (num / (2.0 * den * den)) - ((x - a) / tS);
 }
 
-double URating::Convergence(double d, double v, double p, double s)
-{
+double URating::Convergence(double d, double v, double p, double s) {
 	static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
 
 	// Initialize function values for iteration procedure
@@ -181,33 +167,27 @@ double URating::Convergence(double d, double v, double p, double s)
 	double B;
 	double bTest = dS - pS - v;
 
-	if (bTest > 0.0)
-	{
+	if (bTest > 0.0) {
 		B = FMath::Log2(bTest);
 	}
-	else
-	{
+	else {
 		B = a - Glicko->SystemConst;
-		while (F(B, dS, pS, v, a, tS) < 0.0)
-		{
+		while (F(B, dS, pS, v, a, tS) < 0.0) {
 			B -= Glicko->SystemConst;
 		}
 	}
 
 	double fA = F(A, dS, pS, v, a, tS);
 	double fB = F(B, dS, pS, v, a, tS);
-	while (FMath::Abs(B - A) > Glicko->Convergence)
-	{
+	while (FMath::Abs(B - A) > Glicko->Convergence) {
 		double C = A + (A - B) * fA / (fB - fA);
 		double fC = F(C, dS, pS, v, a, tS);
 
-		if (fC * fB < 0.0)
-		{
+		if (fC * fB < 0.0) {
 			A = B;
 			fA = fB;
 		}
-		else
-		{
+		else {
 			fA /= 2.0;
 		}
 

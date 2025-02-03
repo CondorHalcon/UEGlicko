@@ -1,6 +1,8 @@
 # UE Glicko Package
 An Unreal Engine implementation of the Glicko-2 player rating system.
 
+[Unity Version](https://github.com/CondorHalcon/UnityGlicko)
+
 ## Usage
 The rating system has two components: the configuration and rating objects. The values in `Glicko` described all of the configurable components and can be changed in the project settings in `Edit -> ProjectSettings -> UE Glicko`; this includes the default rating values and system constants. Details of how to configure the rating system are described in the [Glicko-2 paper](http://www.glicko.net/glicko/glicko2.pdf).
 

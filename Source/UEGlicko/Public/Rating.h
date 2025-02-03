@@ -98,13 +98,13 @@ public:
 
 	/// @brief Get rating in Glicko-1 format
 	/// @return Glicko-1 string rating
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Glicko 1", Keywords = "Glicko Rating Get Glicko 1"), Category = "UE Glicko|Rating")
-	FString getGlicko1();
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Glicko 1", Keywords = "Glicko Rating Get Glicko 1"), Category = "UE Glicko|Rating")
+	FString getGlicko1(bool symbals = false);
 
 	/// @brief Get rating in Glicko-2 format
 	/// @return Glicko-2 string rating
-	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Get Glicko 2", Keywords = "Glicko Rating Get Glicko 2"), Category = "UE Glicko|Rating")
-	FString getGlicko2();
+	UFUNCTION(BlueprintPure, meta = (CompactNodeTitle = "Glicko 2", Keywords = "Glicko Rating Get Glicko 2"), Category = "UE Glicko|Rating")
+	FString getGlicko2(bool symbals = false);
 
 private:
 	/// @brief The rating; µ (mu)
