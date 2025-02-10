@@ -15,7 +15,7 @@ New player ratings can be created as follows:
 ```cpp
     // Create a new Rating instance with the default rating
     static const UGlickoSettings* Glicko = UGlickoSettings::GetGlickoSettings();
-    URating* r = URating::MakeRating(Glicko->DefaultRating);
+    URating* r = URating::MakeRatingSimple();
 
     // Create a new Rating instance with a specific rating
     URating* r = URating::MakeRating(1500);
