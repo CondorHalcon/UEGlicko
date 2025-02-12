@@ -108,19 +108,19 @@ public:
 
 private:
 	/// @brief The rating; µ (mu)
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "UE Glicko|Rating")
 	double Rating;
 
 	/// @brief The rating deviation; φ (phi)
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "UE Glicko|Rating")
 	double Deviation;
 
 	/// @brief The rating volatility; σ (sigma)
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "UE Glicko|Rating")
 	double Volatility;
 
 	/// @brief The rating delta; Δ (delta)
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "UE Glicko|Rating")
 	double Delta;
 
 	/// @brief The pending rating value; µ' (mu prime)

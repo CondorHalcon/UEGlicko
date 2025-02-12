@@ -16,11 +16,11 @@ struct UEGLICKO_API FMatch
 
 public:
 	/// @brief The opponent in the match
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "UE Glicko|Match")
 	URating *Opponent;
 
 	/// @brief The score of the match. Should be 0 for a loss, 1 for a win, and .5 for a draw.
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "UE Glicko|Match")
 	float Score;
 };
 
