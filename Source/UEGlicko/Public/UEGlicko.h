@@ -4,6 +4,11 @@
 
 #include "Modules/ModuleManager.h"
 
+// Plugin includes
+#include "GlickoSettings.h"
+#include "Match.h"
+#include "Rating.h"
+
 class FUEGlickoModule : public IModuleInterface
 {
 public:
